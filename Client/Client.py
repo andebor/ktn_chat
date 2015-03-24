@@ -102,6 +102,9 @@ class Client:
             if len(input.split()) < 2:
                 ok, error = False, error + "Please provide a username"
 
+        if requestType == 'logout':
+            if self.loggedin == False:
+                ok, error = False, error + "You are already logged out."
         return ok, error, requestType
 
 
