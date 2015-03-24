@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import socket
 import json
+from MessageReceiver import *
 
 class Client:
     """
@@ -12,8 +13,13 @@ class Client:
         This method is run when creating a new Client object
         """
         # Set up the socket connection to the server
+        self.host = host
+        self.server_port = server_port
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.run()
+        self.messagereceiver = MessageReceiver(self, self.connection)
+        #self.messagereceiver.__init__()
+        #self.messagereceiver.start()
 
         # TODO: Finish init process with necessary code
 
