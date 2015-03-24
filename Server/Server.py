@@ -11,6 +11,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     logic for the server, you must write it outside this class
     """
 
+    BUFFER_SIZE = 4096
+
     def handle(self):
         """
         This method handles the connection between a client and the server.
@@ -23,7 +25,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
         try:
             while True:
-                received_string = json.loads(self.connection.recv(4096))
+                received_string = json.loads(self.connection.recv(BUFFER_SIZE))
                 if not received_string:
                     break
 

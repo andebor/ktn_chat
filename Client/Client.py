@@ -36,19 +36,22 @@ class Client:
         pass
 
     def receive_message(self, message):
+    	#TEST_START
+    	print "Message received: " + message
+    	#TEST_SLUTT
         # TODO: Handle incoming message
         pass
 
     def send_payload(self, request, data):
 
         # Create json object
-        data = {'request': request, 'message': data}
+        data = {'request': request, 'content': data}
 
         # Convert json object to string
         message = json.dumps(data)
 
         # Send string
-        self.send(message)
+        self.connection.send(message)
 
         pass
 
