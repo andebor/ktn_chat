@@ -51,18 +51,22 @@ class Client:
         message = json.dumps(data)
 
         # Send string
-        self.send(message)
+        self.connection.send(message)
 
         pass
 
     def handle_input(self):
         userinput = raw_input('Enter message: ')
-        validated, error, requestType, message = validate_input(userinput)
+        validated, error, requestType = self.validate_input(userinput)
 
         #Print error if not validated
         if validated == False:
             print error
             return
+        
+        if len(userinput.split()) > 1:
+            message = userinput.split(' ', 1)[1]
+
 
         if requestType == 'login':
             self.username = userinput.split()[1].lower()
@@ -70,11 +74,11 @@ class Client:
         elif requestType == 'msg':
             self.send_payload('msg',message)
         elif requestType == 'names':
-            self.send_payload('names')
+            self.send_payload('names', 'None')
         elif requestType == 'help':
-            self.send_payload('help')
+            self.send_payload('help', 'None')
         elif requestType == 'logout':
-            self.send_payload('logout')
+            self.send_payload('logout', 'None')
         else:
             print "Unhandled error in user input"
             
@@ -83,22 +87,25 @@ class Client:
         ok = True
         error = 'Invalid input: '
         
-        #Get request type and message
-        requestType = input.split()[0].lower()
-        message = input.split(' ', 1)[1]
 
         #Check if at least two arguments
         if input.split() == [] :
             ok, error = False, error + "Missing arguments\n"
 
+        #Get request type and message
+        requestType = input.split()[0].lower()
+
         #Validate login
         if requestType == 'login':
             if self.loggedin == True:
                 ok, error = False, error + "You are already logged in.\n"
-            if len(input.slit()) < 2:
+            if len(input.split()) < 2:
                 ok, error = False, error + "Please provide a username"
 
-        return ok, error, requestType, message
+        if requestType == 'logout':
+            if self.loggedin == False:
+                ok, error = False, error + "You are already logged out."
+        return ok, error, requestType
 
 
 if __name__ == '__main__':
