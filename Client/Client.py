@@ -42,7 +42,7 @@ class Client:
     def send_payload(self, request, data):
 
         # Create json object
-        data = {'request': request, 'message': data}
+        data = {'request': request, 'content': data}
 
         # Convert json object to string
         message = json.dumps(data)
