@@ -86,25 +86,31 @@ class Client:
     def validate_input(self, input):
         ok = True
         error = 'Invalid input: '
+        requestType = None
         
 
         #Check if at least two arguments
         if input.split() == [] :
             ok, error = False, error + "Missing arguments\n"
+        else:
+            #Get request type and message
+            requestType = input.split()[0].lower()
 
-        #Get request type and message
-        requestType = input.split()[0].lower()
+            #Validate login
+            if requestType == 'login':
+                if self.loggedin == True:
+                    ok, error = False, error + "You are already logged in.\n"
+                if len(input.split()) < 2:
+                    ok, error = False, error + "Please provide a username\n"
 
-        #Validate login
-        if requestType == 'login':
-            if self.loggedin == True:
-                ok, error = False, error + "You are already logged in.\n"
-            if len(input.split()) < 2:
-                ok, error = False, error + "Please provide a username"
+            if requestType == 'logout':
+                if self.loggedin == False:
+                    ok, error = False, error + "You are already logged out.\n"
 
-        if requestType == 'logout':
-            if self.loggedin == False:
-                ok, error = False, error + "You are already logged out."
+            if requestType == 'msg':
+                if len(input.split()) < 2:
+                    ok, error = False, error + "Please provide a message\n"
+
         return ok, error, requestType
 
 
