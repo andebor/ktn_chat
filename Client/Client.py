@@ -14,6 +14,7 @@ class Client:
 
         # Set up the socket connection to the server
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.loggedin = False
         self.run()
 
         # TODO: Finish init process with necessary code
@@ -30,20 +31,67 @@ class Client:
         # TODO: Handle incoming message
         pass
 
-    def send_payload(self, data):
+    def send_payload(self, request, data):
 
         # Create json object
-        data = {'request': 'message', 'message': data}
+        data = {'request': request, 'message': data}
 
         # Convert json object to string
-        message = data = json.dumps(data)
+        message = json.dumps(data)
 
         # Send string
         self.send(message)
 
-
         pass
 
+    def handle_input(self):
+        userinput = raw_input('Enter message: ')
+        validated, error, requestType, message = validate_input(userinput)
+
+        #Print error if not validated
+        if validated == False:
+            print error
+            return
+
+        if requestType = 'login':
+            self.username = userinput.split()[1].lower()
+            self.login()
+        elif requestType = 'msg':
+            self.send_payload('msg',message)
+        elif requestType = 'names':
+            self.get_names()
+        elif requestType = 'help':
+            self.get_help()
+        elif requestType = 'logout':
+            self.logout()
+        else:
+            print "Unhandled error in user input"
+            
+
+    def validate_input(self, input):
+        ok = True
+        error = 'Invalid input: '
+        
+        #Get request type and message
+        requestType = input.split()[0].lower()
+        message = input.split(' ', 1)[1]
+
+        #Check if at least two arguments
+        if input.split() == [] :
+            ok, error = False, error + "Missing arguments\n"
+
+        #Validate login
+        if requestType = 'login':
+            if self.loggedin == True:
+                ok, error = False, error + "You are already logged in.\n"
+            if len(input.slit()) < 2:
+                ok, error = False, error + "Please provide a username"
+
+        return ok, error, requestType, message
+
+
+    def login(self):
+        send_payload('login', self.username)
 
 if __name__ == '__main__':
     """
