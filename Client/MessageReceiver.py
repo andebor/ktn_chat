@@ -8,7 +8,7 @@ class MessageReceiver(Thread):
     the chat client to both send and receive messages at the same time
     """
 
-    BUFFER_SIZE = 1024
+    BUFFER_SIZE = 4096
 
     def __init__(self, client, connection):
         """
@@ -26,14 +26,16 @@ class MessageReceiver(Thread):
 
     def run(self):
         # TODO: Make MessageReceiver receive and handle payloads
-        connection.listen(True)    #lytt til server
+        #self.connection.listen(True)    #lytt til server
         print "Listening for messages ...\n"
         while True:
             try:
-                message = connection.recv(BUFFER_SIZE)
+                message = self.connection.recv(self.BUFFER_SIZE)
             except IOError:
                 print "Could not receive message from server"
-                message = "Placeholder"
+                message = "PLACEHOLDER1"
+            if len(message) < 1:
+                message = "PLACEHOLDER2"
             #sove litt?
             #message = "Placeholder" #Melding mottatt fra server
             self.client.receive_message(message)
