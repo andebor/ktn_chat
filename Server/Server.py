@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
 import SocketServer
 import json
+from datetime import datetime
+
+# Server response skal være i følgende format: 
+#{
+#    ‘timestamp’: <timestamp>,
+#    ‘sender’: <username>,
+#    ‘response’: <response>,
+#    ‘content’: <content>
+#}
+# Response types: error, info, history and message
 
 
 class ClientHandler(SocketServer.BaseRequestHandler):
@@ -66,31 +76,49 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         return response
 
     def logout(self):
-        response = {'response': 'logout', 'content': self.username }
+        response = {
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'sender': 'server',
+            'response': 'info',
+            'content': self.username + ' is logged out.'
+            }
         return response
 
     def message(self, message):
-        response = {'response': 'message', 'content': message }
-        return
+        response = {
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'sender': self.username,
+            'response': 'message',
+            'content': message
+            }
+        return response
 
 
     def names(self):
-        reponse = {'response': 'names'}
-        reponse["content"] = str(Server.users)
+        response = {
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'sender': 'server',
+            'response': 'info',
+            'content': Server.users
+            }
+        # reponse["content"] = str(Server.users)
         return reponse
 
     def help(self):
-        response = {'response': 'help'}
-        reponse['content'] = """
+        helptext = """
         login <username> - log in with the given username 
         logout - log out
         msg <message> - send message
         names - list users in chat
         help - view help text
         """
+        response = {
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'sender': 'server',
+            'response': 'info',
+            'content': helptext
+            }
         return reponse
-
-
 
     def send(self, data):
         for user in Server.users:
