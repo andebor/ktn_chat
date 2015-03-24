@@ -11,7 +11,6 @@ class Client:
         """
         This method is run when creating a new Client object
         """
-
         # Set up the socket connection to the server
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.run()
@@ -20,7 +19,8 @@ class Client:
 
     def run(self):
         # Initiate the connection to the server
-        self.connection.connect(('localhost', 9998))
+        self.connection.connect(('localhost', 9997))
+        print "Connected to server 'localhost' with port 9997"
 
     def disconnect(self):
         self.connection.close()

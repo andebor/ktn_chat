@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import SocketServer
+import json
 
 
 class ClientHandler(SocketServer.BaseRequestHandler):
@@ -18,23 +19,28 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.port = self.client_address[1]
         self.connection = self.request
 
-        while True:
-            received_string = json.loads(self.connection.recv(4096))
-            if not received_string:
-                break
+        print 'Client connected with hostname ' + self.ip + ':' + str(self.port)
 
-            request = received_string["request"]
+        try:
+            while True:
+                received_string = json.loads(self.connection.recv(4096))
+                if not received_string:
+                    break
 
-            if(request == "login"):
-                self.username = received_string["username"]
-                response = self.login()
-            elif(request == "message"):
-                message = request["message"]
-                reponse = self.message(message)
+                request = received_string["request"]
 
-            print "response: " + response
-            print "users: " + Server.users
-            self.send(response)
+                if(request == "login"):
+                    self.username = received_string["username"]
+                    response = self.login()
+                elif(request == "message"):
+                    message = request["message"]
+                    reponse = self.message(message)
+
+                print "response: " + response
+                print "users: " + Server.users
+                self.send(response)
+        except:
+            pass
 
 
 
@@ -82,7 +88,7 @@ if __name__ == "__main__":
 
     No alterations is necessary
     """
-    HOST, PORT = 'localhost', 9998
+    HOST, PORT = 'localhost', 9997
     print 'Server running...'
 
     # Set up and initiate the TCP server
