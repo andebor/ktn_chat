@@ -66,10 +66,16 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             # TODO: Add handling of received payload from client
 
     def login(self):
-        response = {'response': 'login', 'content': self.username }
+        response = {
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'sender': 'server',
+            'response': 'info',
+            'content': self.username + ' successfully logged in.'
+            }
 
         if self.username in Server.users:
-            response["error"] = "User already logged in"
+            response['response'] = 'error'
+            response['content'] = self.username + ' is already logged in.'
         else:
             server.users[self.username] = self.request
 
