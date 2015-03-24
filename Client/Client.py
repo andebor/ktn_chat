@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import socket
+import json
 
 class Client:
     """
@@ -24,7 +25,7 @@ class Client:
         self.connection.connect(('localhost', 9998))
 
     def disconnect(self):
-        # TODO: Handle disconnection
+        self.connection.close()
         pass
 
     def receive_message(self, message):
@@ -32,7 +33,17 @@ class Client:
         pass
 
     def send_payload(self, data):
-        # TODO: Handle sending of a payload
+
+        # Create json object
+        data = {'request': 'message', 'message': data}
+
+        # Convert json object to string
+        message = data = json.dumps(data)
+
+        # Send string
+        self.send(message)
+
+
         pass
 
 
