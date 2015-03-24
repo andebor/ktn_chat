@@ -30,11 +30,13 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 request = received_string["request"]
 
                 if(request == "login"):
-                    self.username = received_string["username"]
+                    self.username = received_string["content"]
                     response = self.login()
                 elif(request == "message"):
-                    message = request["message"]
-                    reponse = self.message(message)
+                    msg = request["content"]
+                    reponse = self.message(msg)
+                elif(request == "names"):
+                    reponse = self.names()
 
                 print "response: " + response
                 print "users: " + Server.users
@@ -48,7 +50,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             # TODO: Add handling of received payload from client
 
     def login(self):
-        response = {'response': 'login', 'username': self.username }
+        response = {'response': 'login', 'content': self.username }
 
         if self.username in Server.users:
             response["error"] = "User already logged in"
@@ -58,7 +60,14 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         return response
 
     def message(self, message):
-        response = { 'response': 'message' }
+        response = {'response': 'message', 'content': message }
+        return
+
+
+    def names(self):
+        reponse = {'response': 'message'}
+        reponse["content"] = str(Server.users)
+        return reponse
 
 
     def send(self, data):
