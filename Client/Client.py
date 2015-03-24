@@ -33,6 +33,9 @@ class Client:
         pass
 
     def receive_message(self, message):
+    	#TEST_START
+    	print "Message received: " + message
+    	#TEST_SLUTT
         # TODO: Handle incoming message
         pass
 
