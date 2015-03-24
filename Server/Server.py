@@ -34,11 +34,15 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 if(request == "login"):
                     self.username = received_string["content"]
                     response = self.login()
+                elif(request == "logout"):
+                    reponse = self.logout()
                 elif(request == "message"):
                     msg = request["content"]
                     reponse = self.message(msg)
                 elif(request == "names"):
                     reponse = self.names()
+                elif(request == "help"):
+                    response = self.help()
 
                 print "response: " + response
                 print "users: " + Server.users
@@ -61,15 +65,32 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
         return response
 
+    def logout(self):
+        response = {'response': 'logout', 'content': self.username }
+        return response
+
     def message(self, message):
         response = {'response': 'message', 'content': message }
         return
 
 
     def names(self):
-        reponse = {'response': 'message'}
+        reponse = {'response': 'names'}
         reponse["content"] = str(Server.users)
         return reponse
+
+    def help(self):
+        response = {'response': 'help'}
+        reponse['content'] = 
+        """
+        login <username> - log in with the given username
+        logout - log out
+        msg <message> - send message
+        names - list users in chat
+        help - view help text
+        """
+        return reponse
+
 
 
     def send(self, data):
