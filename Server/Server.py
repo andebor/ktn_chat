@@ -81,8 +81,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
     def help(self):
         response = {'response': 'help'}
-        reponse['content'] = 
-        """
+        reponse['content'] = """
         login <username> - log in with the given username 
         logout - log out
         msg <message> - send message
