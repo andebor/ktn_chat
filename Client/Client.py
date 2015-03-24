@@ -12,6 +12,8 @@ class Client:
         """
 
         # Set up the socket connection to the server
+        self.host = host
+        self.server_port = server_port
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.run()
 
