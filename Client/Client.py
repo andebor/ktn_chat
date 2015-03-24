@@ -21,6 +21,8 @@ class Client:
         self.messagereceiver = MessageReceiver(self, self.connection)
         #self.messagereceiver.__init__()
         #self.messagereceiver.start()
+        while True: #for testing
+            self.handle_input()
 
         # TODO: Finish init process with necessary code
 
