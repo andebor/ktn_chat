@@ -51,7 +51,7 @@ class Client:
         message = json.dumps(data)
 
         # Send string
-        self.send(message)
+        self.connection.send(message)
 
         pass
 
