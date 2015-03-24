@@ -54,7 +54,7 @@ class Client:
 
     def handle_input(self):
         userinput = raw_input('Enter message: ')
-        validated, error, requestType, message = validate_input(userinput)
+        validated, error, requestType, message = self.validate_input(userinput)
 
         #Print error if not validated
         if validated == False:
