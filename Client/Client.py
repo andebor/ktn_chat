@@ -21,6 +21,8 @@ class Client:
         self.messagereceiver = MessageReceiver(self, self.connection)
         #self.messagereceiver.__init__()
         #self.messagereceiver.start()
+        while True: #for testing
+            self.handle_input()
 
         # TODO: Finish init process with necessary code
 
@@ -59,16 +61,16 @@ class Client:
             print error
             return
 
-        if requestType = 'login':
+        if requestType == 'login':
             self.username = userinput.split()[1].lower()
             self.login()
-        elif requestType = 'msg':
+        elif requestType == 'msg':
             self.send_payload('msg',message)
-        elif requestType = 'names':
+        elif requestType == 'names':
             self.get_names()
-        elif requestType = 'help':
+        elif requestType == 'help':
             self.get_help()
-        elif requestType = 'logout':
+        elif requestType == 'logout':
             self.logout()
         else:
             print "Unhandled error in user input"
@@ -87,7 +89,7 @@ class Client:
             ok, error = False, error + "Missing arguments\n"
 
         #Validate login
-        if requestType = 'login':
+        if requestType == 'login':
             if self.loggedin == True:
                 ok, error = False, error + "You are already logged in.\n"
             if len(input.slit()) < 2:
