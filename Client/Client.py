@@ -45,7 +45,7 @@ class Client:
     def send_payload(self, request, data):
 
         # Create json object
-        data = {'request': request, 'message': data}
+        data = {'request': request, 'content': data}
 
         # Convert json object to string
         message = json.dumps(data)
@@ -66,15 +66,15 @@ class Client:
 
         if requestType == 'login':
             self.username = userinput.split()[1].lower()
-            self.login()
+            self.send_payload('login', self.username)
         elif requestType == 'msg':
             self.send_payload('msg',message)
         elif requestType == 'names':
-            self.get_names()
+            self.send_payload('names')
         elif requestType == 'help':
-            self.get_help()
+            self.send_payload('help')
         elif requestType == 'logout':
-            self.logout()
+            self.send_payload('logout')
         else:
             print "Unhandled error in user input"
             
@@ -100,9 +100,6 @@ class Client:
 
         return ok, error, requestType, message
 
-
-    def login(self):
-        send_payload('login', self.username)
 
 if __name__ == '__main__':
     """
