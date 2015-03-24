@@ -83,7 +83,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         response = {'response': 'help'}
         reponse['content'] = 
         """
-        login <username> - log in with the given username
+        login <username> - log in with the given username 
         logout - log out
         msg <message> - send message
         names - list users in chat
