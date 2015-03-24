@@ -42,7 +42,8 @@ The request describes what you are requesting of the server. The content is the 
 
 At least, the following requests, with the associated arguments must be supported:
 
-`login <username>` - log in with the given username logout - log out  
+`login <username>` - log in with the given username  
+`logout` - log out  
 `msg <message>` - send message  
 `names` - list users in chat  
 `help` - view help text
