@@ -42,6 +42,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                # if not received_string:
                     #break
 
+                print ""
                 print "Serveren mottok data:"
                 print received_string
                 print ""
@@ -68,9 +69,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 print "users: " + str(server.users)
                 self.send(response)
         except Exception,e:
-            print "lel"
-            print traceback.format_exc()
-            print "lel"
+            #print traceback.format_exc() ////// Commenta ut for å ikke vise feilmelding når noen leaver. Fjern comment hvis man vil se feilmeldinger.
+            pass
             
 
 
@@ -118,7 +118,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         response = {
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'sender': self.username,
-            'response': 'message',
+            'response': 'msg',
             'content': message
             }
         if self.loggedIn == False:

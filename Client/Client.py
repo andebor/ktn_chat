@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import socket
 import json
+import time
 from MessageReceiver import *
 
 class Client:
@@ -68,6 +69,7 @@ class Client:
 
 
     def handle_input(self):
+        time.sleep(0.01)
         userinput = raw_input('--> ')
         validated, error, requestType = self.validate_input(userinput)
 
@@ -89,6 +91,8 @@ class Client:
             self.loggedin = False
         else:
             self.send_payload('msg',userinput)
+
+
             
 
     def validate_input(self, input):
