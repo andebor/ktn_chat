@@ -17,12 +17,13 @@ class Client:
         self.host = host
         self.server_port = server_port
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.loggedin = False
         self.run()
         self.messagereceiver = MessageReceiver(self, self.connection)
         #self.messagereceiver.__init__()
         #self.messagereceiver.start()
         self.terminate = False
+
+        self.send_payload('help', None)
         while self.terminate == False: #for testing
             # self.testing()
             self.handle_input()
@@ -51,6 +52,11 @@ class Client:
             print str(data["content"])
         elif data["response"] == "message":
             print data["sender"] + ": " + data["content"]
+        elif data["response"] == "history":
+            print "\n"
+            print "History:"
+            print str(data["content"])
+            print "\n"
 
     	#TEST_SLUTT
         # TODO: Handle incoming message
@@ -97,15 +103,15 @@ class Client:
             self.send_payload('help', None)
         elif requestType == '/logout':
             self.logout()
+        elif requestType == 'help':
+            self.send_payload('help', None)
         # elif requestType == '/exit':
         #     if self.loggedin == True:
         #         self.logout()
         #     self.terminate = True
         else:
-            if self.loggedin == True:
-                self.send_payload('msg',userinput)
-            else:
-                self.send_payload('help', None)
+            self.send_payload('msg',userinput)
+                
 
             
     def logout(self):
@@ -122,19 +128,8 @@ class Client:
         if input.split() == [] :
             ok, error = False, error + "Missing arguments\n"
         else:
-            #Get request type and message
+
             requestType = input.split()[0].lower()
-
-            #Validate login
-            if requestType == '/login':
-                if self.loggedin == True:
-                    ok, error = False, error + "You are already logged in.\n"
-                if len(input.split()) < 2:
-                    ok, error = False, error + "Please provide a username\n"
-
-            if requestType == '/logout':
-                if self.loggedin == False:
-                    ok, error = False, error + "You are already logged out.\n"
 
             # if requestType == 'msg':
             #     if len(input.split()) < 2:

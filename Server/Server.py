@@ -55,10 +55,12 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
                 request = received_string["request"]
                 response = {}
+                hist = {}
 
                 if(request == "login"):
                     self.username = received_string["content"]
                     response = self.login()
+                    hist = self.history()
                 elif(request == "logout"):
                     response = self.logout()
                 elif(request == "msg"):
@@ -78,6 +80,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
 
                 self.send(response)
+
+                if hist != {}:
+                    self.send(hist)
         except Exception,e:
             print traceback.format_exc()
             pass
@@ -93,7 +98,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'sender': self.username,
             'response': 'info',
-            'content': self.username + ' logged on.' + "\n\n" + "History:" + "\n\n" + "".join(log)
+            'content': self.username + ' logged on.'
             }
 
         if self.username in server.users:
@@ -114,7 +119,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     def logout(self):
         response = {
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'sender': self.username,
+            'sender': "",
             'response': 'info',
             'content': self.username + ' logged off.'
             }
@@ -124,6 +129,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         else:
             self.loggedIn = False
             self.server.users.pop(self.username)
+
+        if self.username:
+            response['sender'] = self.username
         return response
 
     def message(self, message):
@@ -137,8 +145,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             response['response'] = 'error'
             response['content'] = "You need to be logged in to send messages"
         if self.loggedIn == True:
-            log.append(self.username + ":" + message[4:] + "\n")
-        else:
+            log.append(self.username + ": " + message)
             response['sender'] = self.username
         return response
 
@@ -146,7 +153,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     def names(self):
         response = {
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'sender': self.username,
+            'sender': "",
             'response': 'info',
             'content': server.users.keys()
             }
@@ -154,6 +161,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             response['response'] = 'error'
             response['content'] = "You need to be loggin in to see names"
         # response["content"] = str(Server.users)
+        if self.username:
+            response['sender'] = self.username
         return response
 
     def help(self):
@@ -174,6 +183,23 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         if self.username:
             response['sender'] = self.username
         return response
+
+    def history(self):
+        response = {
+        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'sender': "",
+        'response': 'history',
+        'content': "\n".join(log)
+        }
+        if self.loggedIn == False:
+            response['response'] = 'error'
+            response['content'] = "You need to be loggin in to see names"
+        # response["content"] = str(Server.users)
+        if self.username:
+            response['sender'] = self.username
+        return response
+
+
 
     def send(self, data):
         if data["response"] == "message":
