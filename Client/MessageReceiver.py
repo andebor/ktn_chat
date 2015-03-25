@@ -15,6 +15,7 @@ class MessageReceiver(Thread):
         This method is executed when creating a new MessageReceiver object
         """
         Thread.__init__(self)
+        self.setName("MessageReceiverThread")
 
         # Flag to run thread as a deamon
         self.daemon = True
@@ -32,11 +33,12 @@ class MessageReceiver(Thread):
             try:
                 message = self.connection.recv(self.BUFFER_SIZE)
             except IOError:
+                raise
                 print "Could not receive message from server"
                 message = "PLACEHOLDER1"
             if len(message) < 1:
+                continue
                 message = "PLACEHOLDER2"
             #sove litt?
-            #message = "Placeholder" #Melding mottatt fra server
+            #message = "Placeholder" #Melding mottatt fra server 
             self.client.receive_message(message)
-            break
