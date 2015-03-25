@@ -22,7 +22,7 @@ class Client:
         #self.messagereceiver.__init__()
         #self.messagereceiver.start()
         while True: #for testing
-            self.handle_input()
+            self.testing()
 
         # TODO: Finish init process with necessary code
 
@@ -37,15 +37,18 @@ class Client:
 
     def receive_message(self, message):
     	#TEST_START
-    	print "Message received: " + message
+    	print "Message received"
+
+        data = json.loads(message)
+        print data["content"]
     	#TEST_SLUTT
         # TODO: Handle incoming message
-        pass
 
-    def send_payload(self, request, data):
+
+    def send_payload(self, request, content):
 
         # Create json object
-        data = {'request': request, 'content': data}
+        data = {'request': request, 'content': content}
 
         # Convert json object to string
         message = json.dumps(data)
@@ -53,7 +56,15 @@ class Client:
         # Send string
         self.connection.send(message)
 
-        pass
+        print "Message sent: " + str(data)
+
+
+
+    def testing(self):
+        request = raw_input('Enter request: ')
+        content = raw_input('Enter content: ')
+        self.send_payload(request, content)
+
 
     def handle_input(self):
         userinput = raw_input('Enter message: ')
@@ -86,25 +97,31 @@ class Client:
     def validate_input(self, input):
         ok = True
         error = 'Invalid input: '
+        requestType = None
         
 
         #Check if at least two arguments
         if input.split() == [] :
             ok, error = False, error + "Missing arguments\n"
+        else:
+            #Get request type and message
+            requestType = input.split()[0].lower()
 
-        #Get request type and message
-        requestType = input.split()[0].lower()
+            #Validate login
+            if requestType == 'login':
+                if self.loggedin == True:
+                    ok, error = False, error + "You are already logged in.\n"
+                if len(input.split()) < 2:
+                    ok, error = False, error + "Please provide a username\n"
 
-        #Validate login
-        if requestType == 'login':
-            if self.loggedin == True:
-                ok, error = False, error + "You are already logged in.\n"
-            if len(input.split()) < 2:
-                ok, error = False, error + "Please provide a username"
+            if requestType == 'logout':
+                if self.loggedin == False:
+                    ok, error = False, error + "You are already logged out.\n"
 
-        if requestType == 'logout':
-            if self.loggedin == False:
-                ok, error = False, error + "You are already logged out."
+            if requestType == 'msg':
+                if len(input.split()) < 2:
+                    ok, error = False, error + "Please provide a message\n"
+
         return ok, error, requestType
 
 

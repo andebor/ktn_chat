@@ -1,7 +1,19 @@
 # -*- coding: utf-8 -*-
 import SocketServer
 import json
+import re
+import traceback
+from datetime import datetime
 
+# Server response skal være i følgende format: 
+#{
+#    ‘timestamp’: <timestamp>,
+#    ‘sender’: <username>,
+#    ‘response’: <response>,
+#    ‘content’: <content>
+#}
+# Response types: error, info, history and message
+BUFFER_SIZE = 4096
 
 class ClientHandler(SocketServer.BaseRequestHandler):
     """
@@ -11,7 +23,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     logic for the server, you must write it outside this class
     """
 
-    BUFFER_SIZE = 4096
+    
 
     def handle(self):
         """
@@ -20,35 +32,46 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.ip = self.client_address[0]
         self.port = self.client_address[1]
         self.connection = self.request
+        self.loggedIn = False
 
         print 'Client connected with hostname ' + self.ip + ':' + str(self.port)
 
         try:
             while True:
-                received_string = json.loads(self.connection.recv(BUFFER_SIZE))
-                if not received_string:
-                    break
+                received_string = json.loads(self.connection.recv(BUFFER_SIZE).strip())
+               # if not received_string:
+                    #break
+
+                print "Serveren mottok data:"
+                print received_string
+                print ""
 
                 request = received_string["request"]
+                response = {}
 
                 if(request == "login"):
                     self.username = received_string["content"]
                     response = self.login()
                 elif(request == "logout"):
-                    reponse = self.logout()
-                elif(request == "message"):
-                    msg = request["content"]
-                    reponse = self.message(msg)
+                    response = self.logout()
+                elif(request == "msg"):
+                    msg = received_string["content"]
+                    response = self.message(msg)
                 elif(request == "names"):
-                    reponse = self.names()
+                    response = self.names()
                 elif(request == "help"):
                     response = self.help()
+                else:
+                    print "unknown request"
 
-                print "response: " + response
-                print "users: " + Server.users
+                print "response: " + str(response)
+                print "users: " + str(server.users)
                 self.send(response)
-        except:
-            pass
+        except Exception,e:
+            print "lel"
+            print traceback.format_exc()
+            print "lel"
+            
 
 
 
@@ -56,45 +79,85 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             # TODO: Add handling of received payload from client
 
     def login(self):
-        response = {'response': 'login', 'content': self.username }
+        response = {
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'sender': 'server',
+            'response': 'info',
+            'content': self.username + ' successfully logged in.'
+            }
 
-        if self.username in Server.users:
-            response["error"] = "User already logged in"
+
+        if self.username in server.users:
+            response['response'] = 'error'
+            response['content'] = self.username + ' is already logged in.'
+        elif re.match("^[a-zA-Z0-9]+$", self.username) is None:
+            response['response'] = 'error'
+            response['content'] = self.username + ' Only alphabethic character and numbers are accepted in username'
         else:
             server.users[self.username] = self.request
+            self.loggedIn = True
 
         return response
 
     def logout(self):
-        response = {'response': 'logout', 'content': self.username }
+        response = {
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'sender': 'server',
+            'response': 'info',
+            'content': self.username + ' is logged out.'
+            }
+        if self.loggedIn == False:
+            response['response'] = 'error'
+            response['content'] = self.username + ' is not logged in'
+        else:
+            self.loggedIn = False
         return response
 
     def message(self, message):
-        response = {'response': 'message', 'content': message }
-        return
+        response = {
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'sender': self.username,
+            'response': 'message',
+            'content': message
+            }
+        if self.loggedIn == False:
+            response['response'] = 'error'
+            response['content'] = self.username + ' is not logged in'
+        return response
 
 
     def names(self):
-        reponse = {'response': 'names'}
-        reponse["content"] = str(Server.users)
-        return reponse
+        response = {
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'sender': 'server',
+            'response': 'info',
+            'content': server.users
+            }
+        if self.loggedIn == False:
+            response['response'] = 'error'
+            response['content'] = self.username + ' is not logged in'
+        # response["content"] = str(Server.users)
+        return response
 
     def help(self):
-        response = {'response': 'help'}
-        reponse['content'] = """
+        helptext = """
         login <username> - log in with the given username 
         logout - log out
         msg <message> - send message
         names - list users in chat
         help - view help text
         """
-        return reponse
-
-
+        response = {
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'sender': 'server',
+            'response': 'info',
+            'content': helptext
+            }
+        return response
 
     def send(self, data):
-        for user in Server.users:
-            server.users[username].sendall(json.dumps(data))
+        for user in server.users:
+            server.users[user].sendall(json.dumps(data))
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
@@ -124,4 +187,5 @@ if __name__ == "__main__":
 
     # Set up and initiate the TCP server
     server = ThreadedTCPServer((HOST, PORT), ClientHandler)
+    server.init()
     server.serve_forever()

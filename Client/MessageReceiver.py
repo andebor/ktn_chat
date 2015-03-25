@@ -40,5 +40,6 @@ class MessageReceiver(Thread):
                 continue
                 message = "PLACEHOLDER2"
             #sove litt?
-            #message = "Placeholder" #Melding mottatt fra server 
+            #message = "Placeholder" #Melding mottatt fra server
             self.client.receive_message(message)
+            #break
