@@ -44,7 +44,6 @@ class Client:
     	# print "Message received"
 
         data = json.loads(message)
-        print '\n'
 
         if data["response"] == "info":
             print str(data["content"])
@@ -53,10 +52,9 @@ class Client:
         elif data["response"] == "message":
             print data["sender"] + ": " + data["content"]
         elif data["response"] == "history":
-            print "\n"
+            print ""
             print "History:"
             print str(data["content"])
-            print "\n"
 
     	#TEST_SLUTT
         # TODO: Handle incoming message
