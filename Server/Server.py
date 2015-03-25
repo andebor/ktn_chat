@@ -136,7 +136,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             response['response'] = 'error'
             response['content'] = "You need to be logged in to send messages"
         if self.loggedIn == True:
-            log.append(self.username + ":" + message[3:] + "\n")
+            log.append(self.username + ":" + message[4:] + "\n")
         else:
             response['sender'] = self.username
         return response
