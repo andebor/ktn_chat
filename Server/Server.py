@@ -132,7 +132,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'sender': 'server',
             'response': 'info',
-            'content': server.users.keys()
+            'content': ''.join(server.users.keys())
             }
         if self.loggedIn == False:
             response['response'] = 'error'
