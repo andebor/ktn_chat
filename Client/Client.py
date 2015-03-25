@@ -22,7 +22,7 @@ class Client:
         #self.messagereceiver.__init__()
         #self.messagereceiver.start()
         while True: #for testing
-            self.handle_input()
+            self.testing()
 
         # TODO: Finish init process with necessary code
 
@@ -42,10 +42,10 @@ class Client:
         # TODO: Handle incoming message
         pass
 
-    def send_payload(self, request, data):
+    def send_payload(self, request, content):
 
         # Create json object
-        data = {'request': request, 'content': data}
+        data = {'request': request, 'content': content}
 
         # Convert json object to string
         message = json.dumps(data)
@@ -53,7 +53,15 @@ class Client:
         # Send string
         self.connection.send(message)
 
-        pass
+        print str(data) + " was sent to server"
+
+
+
+    def testing(self):
+        request = raw_input('Enter request: ')
+        content = raw_input('Enter content: ')
+        self.send_payload(request, content)
+
 
     def handle_input(self):
         userinput = raw_input('Enter message: ')
