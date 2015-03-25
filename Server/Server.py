@@ -157,8 +157,11 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         return response
 
     def send(self, data):
-        for user in server.users:
-            server.users[user].sendall(json.dumps(data))
+        if data["response"] == "msg":
+            for user in server.users:
+                server.users[user].sendall(json.dumps(data))
+        else:
+            self.request.sendall(json.dumps(data))
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):

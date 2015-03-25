@@ -41,7 +41,7 @@ class Client:
     	# print "Message received"
 
         data = json.loads(message)
-        print '\n' + data["content"]
+        print '\n' + str(data["content"])
     	#TEST_SLUTT
         # TODO: Handle incoming message
 
