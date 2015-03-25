@@ -39,8 +39,8 @@ class Client:
     	#TEST_START
     	print "Message received"
 
-        print type(message)
-        print message
+        data = json.loads(message)
+        print data["content"]
     	#TEST_SLUTT
         # TODO: Handle incoming message
 

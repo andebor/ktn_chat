@@ -54,9 +54,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                     response = self.login()
                 elif(request == "logout"):
                     response = self.logout()
-                elif(request == "message"):
-                    print "jaaa"
-                    msg = request["content"]
+                elif(request == "msg"):
+                    msg = received_string["content"]
                     response = self.message(msg)
                 elif(request == "names"):
                     response = self.names()
