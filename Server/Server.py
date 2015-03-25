@@ -44,8 +44,11 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
                 print ""
                 print "Serveren mottok data:"
-                print received_string
-                print ""
+                for key, value in received_string.iteritems():
+                    print str(key) + ": " + str(value)
+
+
+
 
                 request = received_string["request"]
                 response = {}
@@ -65,11 +68,15 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 else:
                     print "unknown request"
 
-                print "response: " + str(response)
-                print "users: " + str(server.users)
+                print ""
+                print "Serveren sender data: "
+                for key, value in response.iteritems():
+                    print str(key) + ": " + str(value)
+
+
                 self.send(response)
         except Exception,e:
-            #print traceback.format_exc() ////// Commenta ut for å ikke vise feilmelding når noen leaver. Fjern comment hvis man vil se feilmeldinger.
+            print traceback.format_exc()
             pass
             
 
@@ -120,13 +127,15 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     def message(self, message):
         response = {
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'sender': self.username,
+            'sender': "",
             'response': 'message',
             'content': message
             }
         if self.loggedIn == False:
             response['response'] = 'error'
-            response['content'] = self.username + ' is not logged in'
+            response['content'] = "You need to be logged in to send messages"
+        else:
+            response['sender'] = self.username
         return response
 
 
@@ -139,7 +148,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             }
         if self.loggedIn == False:
             response['response'] = 'error'
-            response['content'] = self.username + ' is not logged in'
+            response['content'] = "You need to be loggin in to see names"
         # response["content"] = str(Server.users)
         return response
 
@@ -162,7 +171,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     def send(self, data):
         if data["response"] == "message":
             for user in server.users:
-                server.users[user].sendall(json.dumps(data))
+                if user != self.username:
+                    server.users[user].sendall(json.dumps(data))
         else:
             self.request.sendall(json.dumps(data))
 

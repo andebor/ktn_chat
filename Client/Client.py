@@ -79,7 +79,7 @@ class Client:
 
 
     def handle_input(self):
-        time.sleep(0.01)
+        time.sleep(0.1)
         userinput = raw_input('--> ')
         validated, error, requestType = self.validate_input(userinput)
 
