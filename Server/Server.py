@@ -90,6 +90,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         if self.username in server.users:
             response['response'] = 'error'
             response['content'] = self.username + ' is already logged in.'
+        elif self.loggedIn == True:
+            response['response'] = 'error'
+            response['content'] = "You are already logged in"
         elif re.match("^[a-zA-Z0-9]+$", self.username) is None:
             response['response'] = 'error'
             response['content'] = self.username + ' Only alphabethic character and numbers are accepted in username'
@@ -104,11 +107,11 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'sender': 'server',
             'response': 'info',
-            'content': self.username + ' is logged out.'
+            'content': 'You are now logged out.'
             }
         if self.loggedIn == False:
             response['response'] = 'error'
-            response['content'] = self.username + ' is not logged in'
+            response['content'] = "Can't log out because you are not logged in"
         else:
             self.loggedIn = False
             self.server.users.pop(self.username)
@@ -118,7 +121,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         response = {
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'sender': self.username,
-            'response': 'msg',
+            'response': 'message',
             'content': message
             }
         if self.loggedIn == False:
@@ -132,7 +135,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'sender': 'server',
             'response': 'info',
-            'content': ''.join(server.users.keys())
+            'content': server.users.keys()
             }
         if self.loggedIn == False:
             response['response'] = 'error'
@@ -157,7 +160,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         return response
 
     def send(self, data):
-        if data["response"] == "msg":
+        if data["response"] == "message":
             for user in server.users:
                 server.users[user].sendall(json.dumps(data))
         else:

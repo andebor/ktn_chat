@@ -42,7 +42,17 @@ class Client:
     	# print "Message received"
 
         data = json.loads(message)
-        print '\n' + str(data["content"])
+        print '\n'
+
+        if data["response"] == "info":
+            print str(data["content"])
+        elif data["response"] == "error":
+            print str(data["content"])
+        elif data["response"] == "message":
+            print data["sender"] + ": " + data["content"]
+
+
+
     	#TEST_SLUTT
         # TODO: Handle incoming message
 
@@ -81,16 +91,16 @@ class Client:
         if requestType == 'login':
             self.username = userinput.split()[1].lower()
             self.send_payload('login', self.username)
-            self.loggedin = True
         elif requestType == 'names':
             self.send_payload('names', 'None')
         elif requestType == 'help':
             self.send_payload('help', None)
         elif requestType == 'logout':
             self.send_payload('logout', None)
-            self.loggedin = False
-        else:
+        elif requestType == "msg":
             self.send_payload('msg',userinput)
+        else:
+            print "Invalid command"
 
 
             
@@ -107,17 +117,6 @@ class Client:
         else:
             #Get request type and message
             requestType = input.split()[0].lower()
-
-            #Validate login
-            if requestType == 'login':
-                if self.loggedin == True:
-                    ok, error = False, error + "You are already logged in.\n"
-                if len(input.split()) < 2:
-                    ok, error = False, error + "Please provide a username\n"
-
-            if requestType == 'logout':
-                if self.loggedin == False:
-                    ok, error = False, error + "You are already logged out.\n"
 
             if requestType == 'msg':
                 if len(input.split()) < 2:
