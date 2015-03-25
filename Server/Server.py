@@ -15,6 +15,8 @@ from datetime import datetime
 # Response types: error, info, history and message
 BUFFER_SIZE = 4096
 
+log = []
+
 class ClientHandler(SocketServer.BaseRequestHandler):
     """
     This is the ClientHandler class. Everytime a new client connects to the
@@ -90,7 +92,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'sender': 'server',
             'response': 'info',
-            'content': self.username + ' successfully logged in.'
+            'content': self.username + ' successfully logged in.' + "\n\n" + "History:" + "\n\n" + "".join(log)
             }
 
 
@@ -134,6 +136,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         if self.loggedIn == False:
             response['response'] = 'error'
             response['content'] = "You need to be logged in to send messages"
+        if self.loggedIn == True:
+            log.append(self.username + ":" + message[3:] + "\n")
         else:
             response['sender'] = self.username
         return response
