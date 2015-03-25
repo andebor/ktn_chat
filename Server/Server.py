@@ -35,6 +35,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.port = self.client_address[1]
         self.connection = self.request
         self.loggedIn = False
+        self.username = ''
 
         print 'Client connected with hostname ' + self.ip + ':' + str(self.port)
 
@@ -157,18 +158,21 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
     def help(self):
         helptext = """
-        login <username> - log in with the given username 
-        logout - log out
-        msg <message> - send message
-        names - list users in chat
-        help - view help text
+        /login <username> - log in with the given username 
+        /logout - log out
+        <message> - send message
+        /names - list users in chat
+        /help - view help text
         """
         response = {
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'sender': self.username,
+            'sender': '',
             'response': 'info',
             'content': helptext
             }
+
+        if self.username:
+            response['sender'] = self.username
         return response
 
     def send(self, data):

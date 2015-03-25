@@ -102,7 +102,10 @@ class Client:
         #         self.logout()
         #     self.terminate = True
         else:
-            self.send_payload('msg',userinput)
+            if self.loggedin == True:
+                self.send_payload('msg',userinput)
+            else:
+                self.send_payload('help', None)
 
             
     def logout(self):
