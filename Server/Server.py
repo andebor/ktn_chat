@@ -111,6 +111,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             response['content'] = self.username + ' is not logged in'
         else:
             self.loggedIn = False
+            self.server.users.pop(self.username)
         return response
 
     def message(self, message):
@@ -131,7 +132,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'sender': 'server',
             'response': 'info',
-            'content': server.users
+            'content': server.users.keys()
             }
         if self.loggedIn == False:
             response['response'] = 'error'

@@ -22,7 +22,8 @@ class Client:
         #self.messagereceiver.__init__()
         #self.messagereceiver.start()
         while True: #for testing
-            self.testing()
+            # self.testing()
+            self.handle_input()
 
         # TODO: Finish init process with necessary code
 
@@ -37,10 +38,10 @@ class Client:
 
     def receive_message(self, message):
     	#TEST_START
-    	print "Message received"
+    	# print "Message received"
 
         data = json.loads(message)
-        print data["content"]
+        print '\n' + data["content"]
     	#TEST_SLUTT
         # TODO: Handle incoming message
 
@@ -56,7 +57,7 @@ class Client:
         # Send string
         self.connection.send(message)
 
-        print "Message sent: " + str(data)
+        # print "Message sent: " + str(data)  #for testing
 
 
 
@@ -67,7 +68,7 @@ class Client:
 
 
     def handle_input(self):
-        userinput = raw_input('Enter message: ')
+        userinput = raw_input('--> ')
         validated, error, requestType = self.validate_input(userinput)
 
         #Print error if not validated
@@ -75,23 +76,19 @@ class Client:
             print error
             return
         
-        if len(userinput.split()) > 1:
-            message = userinput.split(' ', 1)[1]
-
-
         if requestType == 'login':
             self.username = userinput.split()[1].lower()
             self.send_payload('login', self.username)
-        elif requestType == 'msg':
-            self.send_payload('msg',message)
+            self.loggedin = True
         elif requestType == 'names':
             self.send_payload('names', 'None')
         elif requestType == 'help':
-            self.send_payload('help', 'None')
+            self.send_payload('help', None)
         elif requestType == 'logout':
-            self.send_payload('logout', 'None')
+            self.send_payload('logout', None)
+            self.loggedin = False
         else:
-            print "Unhandled error in user input"
+            self.send_payload('msg',userinput)
             
 
     def validate_input(self, input):
