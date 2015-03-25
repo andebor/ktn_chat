@@ -37,10 +37,13 @@ class Client:
 
     def receive_message(self, message):
     	#TEST_START
-    	print "Message received: " + message
+    	print "Message received"
+
+        print type(message)
+        print message
     	#TEST_SLUTT
         # TODO: Handle incoming message
-        pass
+
 
     def send_payload(self, request, content):
 
@@ -53,7 +56,7 @@ class Client:
         # Send string
         self.connection.send(message)
 
-        print str(data) + " was sent to server"
+        print "Message sent: " + str(data)
 
 
 

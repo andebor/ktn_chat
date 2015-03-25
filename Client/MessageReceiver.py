@@ -38,5 +38,5 @@ class MessageReceiver(Thread):
                 message = "PLACEHOLDER2"
             #sove litt?
             #message = "Placeholder" #Melding mottatt fra server
-            #self.client.receive_message(message)
+            self.client.receive_message(message)
             break
