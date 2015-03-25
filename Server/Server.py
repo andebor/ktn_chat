@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import SocketServer
 import json
+import re
 from datetime import datetime
 
 # Server response skal være i følgende format: 
@@ -30,6 +31,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.ip = self.client_address[0]
         self.port = self.client_address[1]
         self.connection = self.request
+        self.loggedIn = False
 
         print 'Client connected with hostname ' + self.ip + ':' + str(self.port)
 
@@ -73,11 +75,17 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             'content': self.username + ' successfully logged in.'
             }
 
+
+
         if self.username in Server.users:
             response['response'] = 'error'
             response['content'] = self.username + ' is already logged in.'
+        elif re.match("^a-zA-Z0-9$", self.Username) is None:
+            response['response'] = 'error'
+            response['content'] = self.username + ' Only alphabethic character and numbers are accepted in username'
         else:
             server.users[self.username] = self.request
+            self.loggedIn = True
 
         return response
 
@@ -88,6 +96,11 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             'response': 'info',
             'content': self.username + ' is logged out.'
             }
+        if self.loggedIn == False:
+            response['response'] = 'error'
+            response['content'] = self.username + ' is not logged in'
+        else:
+            self.loggedIn = False
         return response
 
     def message(self, message):
@@ -97,6 +110,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             'response': 'message',
             'content': message
             }
+        if self.loggedIn == False:
+            response['response'] = 'error'
+            response['content'] = self.username + ' is not logged in'
         return response
 
 
@@ -107,6 +123,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             'response': 'info',
             'content': Server.users
             }
+        if self.loggedIn == False:
+            response['response'] = 'error'
+            response['content'] = self.username + ' is not logged in'
         # reponse["content"] = str(Server.users)
         return reponse
 
