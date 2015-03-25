@@ -88,9 +88,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     def login(self):
         response = {
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'sender': 'server',
+            'sender': self.username,
             'response': 'info',
-            'content': self.username + ' successfully logged in.'
+            'content': self.username + ' logged on.'
             }
 
 
@@ -112,9 +112,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     def logout(self):
         response = {
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'sender': 'server',
+            'sender': self.username,
             'response': 'info',
-            'content': 'You are now logged out.'
+            'content': self.username + ' logged off.'
             }
         if self.loggedIn == False:
             response['response'] = 'error'
@@ -142,7 +142,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     def names(self):
         response = {
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'sender': 'server',
+            'sender': self.username,
             'response': 'info',
             'content': server.users.keys()
             }
@@ -162,7 +162,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         """
         response = {
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'sender': 'server',
+            'sender': self.username,
             'response': 'info',
             'content': helptext
             }

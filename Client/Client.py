@@ -22,10 +22,12 @@ class Client:
         self.messagereceiver = MessageReceiver(self, self.connection)
         #self.messagereceiver.__init__()
         #self.messagereceiver.start()
-        while True: #for testing
+        self.terminate = False
+        while self.terminate == False: #for testing
             # self.testing()
             self.handle_input()
 
+        self.disconnect()
         # TODO: Finish init process with necessary code
 
     def run(self):
@@ -35,7 +37,6 @@ class Client:
 
     def disconnect(self):
         self.connection.close()
-        pass
 
     def receive_message(self, message):
     	#TEST_START
@@ -50,8 +51,6 @@ class Client:
             print str(data["content"])
         elif data["response"] == "message":
             print data["sender"] + ": " + data["content"]
-
-
 
     	#TEST_SLUTT
         # TODO: Handle incoming message
@@ -88,22 +87,27 @@ class Client:
             print error
             return
         
-        if requestType == 'login':
+        if requestType == '/login':
             self.username = userinput.split()[1].lower()
             self.send_payload('login', self.username)
-        elif requestType == 'names':
+            self.loggedin = True
+        elif requestType == '/names':
             self.send_payload('names', 'None')
-        elif requestType == 'help':
+        elif requestType == '/help':
             self.send_payload('help', None)
-        elif requestType == 'logout':
-            self.send_payload('logout', None)
-        elif requestType == "msg":
-            self.send_payload('msg',userinput)
+        elif requestType == '/logout':
+            self.logout()
+        # elif requestType == '/exit':
+        #     if self.loggedin == True:
+        #         self.logout()
+        #     self.terminate = True
         else:
-            print "Invalid command"
-
+            self.send_payload('msg',userinput)
 
             
+    def logout(self):
+        self.send_payload('logout', None)
+        self.loggedin = False
 
     def validate_input(self, input):
         ok = True
@@ -118,10 +122,20 @@ class Client:
             #Get request type and message
             requestType = input.split()[0].lower()
 
-            if requestType == 'msg':
+            #Validate login
+            if requestType == '/login':
+                if self.loggedin == True:
+                    ok, error = False, error + "You are already logged in.\n"
                 if len(input.split()) < 2:
-                    ok, error = False, error + "Please provide a message\n"
+                    ok, error = False, error + "Please provide a username\n"
 
+            if requestType == '/logout':
+                if self.loggedin == False:
+                    ok, error = False, error + "You are already logged out.\n"
+
+            # if requestType == 'msg':
+            #     if len(input.split()) < 2:
+            #         ok, error = False, error + "Please provide a message\n"
         return ok, error, requestType
 
 
