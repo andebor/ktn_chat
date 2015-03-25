@@ -15,6 +15,8 @@ from datetime import datetime
 # Response types: error, info, history and message
 BUFFER_SIZE = 4096
 
+log = []
+
 class ClientHandler(SocketServer.BaseRequestHandler):
     """
     This is the ClientHandler class. Everytime a new client connects to the
@@ -67,6 +69,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
                 print "response: " + str(response)
                 print "users: " + str(server.users)
+                print "log" + "".join(log)
                 self.send(response)
         except Exception,e:
             #print traceback.format_exc() ////// Commenta ut for å ikke vise feilmelding når noen leaver. Fjern comment hvis man vil se feilmeldinger.
@@ -83,7 +86,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'sender': 'server',
             'response': 'info',
-            'content': self.username + ' successfully logged in.'
+            'content': self.username + ' successfully logged in.' + '\n' + 'History:' + '\n' + "".join(log)
             }
 
 
@@ -124,6 +127,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         if self.loggedIn == False:
             response['response'] = 'error'
             response['content'] = self.username + ' is not logged in'
+        if self.loggedIn == True:
+            log.append(self.username + ": " + message + "\n")
         return response
 
 
@@ -167,6 +172,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     def init(self):
         self.users = {}
+
+
+
 
     """
     This class is present so that each client connected will be ran as a own
